@@ -1,0 +1,125 @@
+body {
+  font-family: sans-serif;
+  background-color: #f4f4f4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  padding: 20px;
+}
+
+.container {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 600px;
+}
+
+.user-form,
+.view-data-form,
+.back-form {
+  margin-bottom: 20px;
+}
+
+.form-input {
+  width: calc(100% - 22px);
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.form-button,
+.view-data-button,
+.edit-button,
+.delete-button,
+.back-button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.form-button:hover,
+.view-data-button:hover,
+.edit-button:hover,
+.delete-button:hover,
+.back-button:hover {
+  background-color: #0056b3;
+}
+
+h2 {
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.user-list {
+  list-style: none;
+  padding: 0;
+}
+
+.user-item {
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 10px;
+}
+
+.user-detail {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+.user-actions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.edit-button {
+  width: auto;
+  box-sizing: border-box;
+  margin-right: 5px;
+  margin-bottom: 5px;
+}
+
+.delete-button {
+  width: auto;
+  box-sizing: border-box;
+  margin-bottom: 5px;
+}
+
+.no-data {
+  text-align: center;
+  color: #777;
+}
+
+.back-form,
+.form-button {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.back-button {
+  width: 150px;
+  height: 40px;
+  display: inline-block;
+}
+
+button[type="submit"].form-button {
+  width: 150px;
+  margin-left: 225px;
+  display: inline-block;
+}
