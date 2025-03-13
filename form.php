@@ -1,3 +1,11 @@
+<?php
+session_start();
+if (!isset($_SESSION['user'])) {
+    header("Location: login.php");
+    exit;
+}
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -5,7 +13,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
+    <div class="containerform">
         <form method="POST" action="create.php" class="user-form">
             <input type="text" name="name" placeholder="Nama" required class="form-input"><br>
             <input type="email" name="email" placeholder="Email" required class="form-input"><br>
