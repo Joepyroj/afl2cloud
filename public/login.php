@@ -4,7 +4,10 @@ require __DIR__.'/vendor/autoload.php';
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Auth;
 
-$factory = (new Factory)->withServiceAccount(__DIR__.'/firebase_credentials.json');
+$firebaseCredentials = getenv('FIREBASE_CREDENTIALS_JSON');
+$serviceAccountArray = json_decode($firebaseCredentials, true);
+$factory = (new Factory)->withServiceAccount($serviceAccountArray);
+
 $auth = $factory->createAuth();
 
 $message = '';

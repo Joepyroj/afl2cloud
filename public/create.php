@@ -1,5 +1,6 @@
 <?php
-require 'firebase_config.php';
+require_once 'firebase_config.php';
+
 
 if ($_SERVER['REQUEST_METHOD']== 'POST') {
     $name = $_POST['name'];

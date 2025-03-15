@@ -1,5 +1,6 @@
 <?php
-require 'firebase_config.php';
+require_once 'firebase_config.php';
+
 
 if (isset($_GET['id'])) {
     $userId = $_GET['id'];

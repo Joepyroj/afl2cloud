@@ -13,6 +13,9 @@ if (!$firebaseCredentials) {
 $serviceAccountArray = json_decode($firebaseCredentials, true);
 
 // Gunakan langsung tanpa file fisik
+$firebaseCredentials = getenv('FIREBASE_CREDENTIALS_JSON');
+$serviceAccountArray = json_decode($firebaseCredentials, true);
 $factory = (new Factory)->withServiceAccount($serviceAccountArray);
+
 $auth = $factory->createAuth();
 ?>
