@@ -12,10 +12,11 @@ if (!$firebaseCredentials) {
 // Decode JSON string
 $serviceAccountArray = json_decode($firebaseCredentials, true);
 
-// Gunakan langsung tanpa file fisik
-$firebaseCredentials = getenv('FIREBASE_CREDENTIALS_JSON');
-$serviceAccountArray = json_decode($firebaseCredentials, true);
+// Inisialisasi Firebase
 $factory = (new Factory)->withServiceAccount($serviceAccountArray);
 
+// Inisialisasi Auth dan Database
 $auth = $factory->createAuth();
+$database = $factory->createDatabase();
+
 ?>
