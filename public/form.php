@@ -14,6 +14,7 @@ if (!isset($_SESSION['user'])) {
 </head>
 <body>
     <div class="containerform">
+        <h1>Masukkan data siswa</h1>
         <form method="POST" action="create.php" class="user-form">
             <input type="text" name="name" placeholder="Nama" required class="form-input"><br>
             <input type="email" name="email" placeholder="Email" required class="form-input"><br>

@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: afl2cloud-app
+    env: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: FIREBASE_CREDENTIALS_JSON
+        value: |
+          {
+            "type": "service_account",
+  "project_id": "aflcloudjulius",
+  "private_key_id": "490b9d698a2f3f15deec9539c55f74e872a3c128",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCpUYDrHNC4oqSD\nIEu2wJkq9oYrIFpFogDDXllaiaJrY4KNVkUoL2iVkCD4s/NEhy0q6hKA0kYdBB0F\nQcgb2yPzqvysLXb2Z7dRjp6kjkwSS6tlov2zHwu2zSZ5eU+pvV/0lxuxmprzbv7W\nIG96uoeKl+xxqQiLlKwHKaJWceRYvJIT+cpDHC8ieSBPXOCi3tMwNA3xf7SsyZ+D\nLm4/QxIWwKmOQqJrEBkpPMXWpehS9uIjkcx2TqlVVvWWn18UMlzaI9NGUItbkd+Q\n4OBTp06I2dSg8uUdukiWr5lsHH4+BlsW+5vI73ed/LK8uJdf/i+pnVaT72iE6glz\nUFZKDl9hAgMBAAECggEAEvo9Il0I8eDc4ouQoOumXz/hWt0V8R8Oydb92d16VGID\nZHcKak4iAT11zJpSxlgGUnyI1WJ8FE19OTUdyi1+MpX0GxI/dq+6Rsxe8J+4XAaa\nL9qcZ+Kva+5DhTL5IFPG+QGky3vCKU3EB1j8VbupbHnJuRWSjR59R5I9jUXXq7BM\nL1lKp0khDEv6lewiEBB7x596THlNI4tlz/nNZOl96NabmhvJdhIItQ/Qni4ZrhOG\nfHY+erKsON/m5jM0mpBh7n9n7Vscv2vnBHfQq5fCIsJuOh8Hi3X9k7TlaKCZhPWy\nwTbLCitkoz82xvcZkolb2S2v5urcxTBXSf0t1xsmnwKBgQDjUPk+REKsmUdvF6ls\n3F21plgq//0MdptmXyPIU8JPKa/Z2mI1+JLYaR7/HUcqSZBq+wOj7aZRupCq7Dui\nDYweqK4xUSrJFo+6jNqmkcX6uEAd98malSaze6vmz/Po7rgSBnqtthf+v2LIRIjW\nLBUqm39DNOR83FND3uHDHrS26wKBgQC+rwQIKvqbYzAX26aye78sapIpT08gI+ZY\n8m1Dqq7/c4D7c2xQboioM/76mbM6CAits3tbrhmYHNXO8KVnrulrPh29iIPEPMux\nDXmPolMpPk9XZJ4JgFmxcz3KbhW5PUe1XisDQ7ScNC8Gtc7QiFb/N1zbgEOd9LND\nc3st9/9H4wKBgQCpwLVwj28vD4Qt7QCj/+inF2LuMZ6aKRShnVjOZ+ZKUbo1uQTw\ngwG+RLpWD1outSL5ERzF1VoH3IfebG2X9f/2gUccIx4NbyDEUh2SmHe9ZMzU1E8k\ndk+hZzCXPCJMh8DEDTyd7sb6gZfWMH/zWJYx7E9cM+qRZ8NygsYbfRm9IwKBgF5t\n/5on5pljAmMeRKwo+iB92koY2394J8+upouXEDizM5HStDYUtxpNPZ1O1mILrniO\n5K0fR897oCpuJAt3pGKWjVXaMB7TWLAikyudYH+ROut1iYn9BO4KuvPvllR403Uu\n4DAqrFuawBsbmALPMf4LpbGSEGo9zzS9EKhQIxyvAoGBAIRBWPqMa+dk3pPZWajs\nomJMZJZL+kw7V7nB5uY8tlqcwCS0ZFU1FMZTa8A+bCTmUKJVXvrrdEfQL9mCRTdW\nK5m0BQo8xP3Z8f2+m5Zy4J4d4yOmnfvDkKBCvwUPKdgjWsVab7wj7PC1Lm4S+WY/\nBDqaWOQ8t196GwTgTrzdx8rw\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-fbsvc@aflcloudjulius.iam.gserviceaccount.com",
+  "client_id": "110241172451897789256",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40aflcloudjulius.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+          }
