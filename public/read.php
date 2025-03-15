@@ -7,7 +7,7 @@ function readUsers() {
     $usersRef = $database->getReference('users');
     $snapshot = $usersRef->getSnapshot();
 
-    if ($snapshot->exists()) {
+    if ($snapshot->exists() && is_array($snapshot->getValue())) {
         return $snapshot->getValue();
     } else {
         return [];
