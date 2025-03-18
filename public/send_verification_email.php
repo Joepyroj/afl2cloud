@@ -12,8 +12,8 @@ function sendVerificationEmail($toEmail, $verificationLink) {
         $mail->isSMTP();
         $mail->Host       = 'smtp.gmail.com';
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'youremail@gmail.com';         // Ganti dengan email kamu
-        $mail->Password   = 'your_app_password';           // Ganti dengan App Password dari langkah 1
+        $mail->Username   = 'marialiemua@gmail.com';         // Ganti dengan email kamu
+        $mail->Password   = 'zuksozrrcjiggpjx';           // Ganti dengan App Password dari langkah 1
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
 
