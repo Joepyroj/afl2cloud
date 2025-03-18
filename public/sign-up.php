@@ -1,27 +1,43 @@
 <?php
-require __DIR__.'/vendor/autoload.php';
-use Kreait\Firebase\Factory;
-use Kreait\Firebase\Auth;
+require_once 'firebase_config.php';
 
-$firebaseCredentials = getenv('FIREBASE_CREDENTIALS_JSON');
-$serviceAccountArray = json_decode($firebaseCredentials, true);
-$factory = (new Factory)->withServiceAccount($serviceAccountArray);
-
-$auth = $factory->createAuth();
+use Kreait\Firebase\Exception\Auth\EmailExists;
 
 $message = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'] ?? '';
-    $password = $_POST['password'] ?? '';
+    $email = $_POST['email'];
+    $password = $_POST['password'];
 
     try {
-        $user = $auth->createUserWithEmailAndPassword($email, $password);
-        $message = 'User berhasil dibuat. Silakan login.';
-    } catch (\Kreait\Firebase\Exception\Auth\EmailExists $e) {
-        $message = 'Email sudah terdaftar.';
+        $userProperties = [
+            'email' => $email,
+            'emailVerified' => false,
+            'password' => $password,
+            'disabled' => false,
+        ];
+
+        $createdUser = $auth->createUser($userProperties);
+
+        // Kirim link verifikasi email
+        $verifyLink = $auth->getEmailVerificationLink($email);
+
+        // Kirim email menggunakan mail()
+        $subject = "Verifikasi Email Anda";
+        $headers = "From: admin@domainanda.com\r\n";
+        $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+        $body = "Hai,<br>Silakan klik link berikut untuk verifikasi email kamu:<br><a href='$verifyLink'>$verifyLink</a>";
+
+        if (mail($email, $subject, $body, $headers)) {
+            $message = "Akun berhasil dibuat. Silakan cek email untuk verifikasi.";
+        } else {
+            $message = "Akun dibuat, tapi gagal mengirim email verifikasi.";
+        }
+
+    } catch (EmailExists $e) {
+        $message = "Email sudah terdaftar.";
     } catch (\Throwable $e) {
-        $message = 'Terjadi kesalahan: '.$e->getMessage();
+        $message = "Terjadi kesalahan: " . $e->getMessage();
     }
 }
 ?>

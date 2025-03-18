@@ -1,32 +1,38 @@
 <?php
-session_start();
-require __DIR__.'/vendor/autoload.php';
-use Kreait\Firebase\Factory;
-use Kreait\Firebase\Auth;
+require_once 'firebase_config.php';
 
-$firebaseCredentials = getenv('FIREBASE_CREDENTIALS_JSON');
-$serviceAccountArray = json_decode($firebaseCredentials, true);
-$factory = (new Factory)->withServiceAccount($serviceAccountArray);
-
-$auth = $factory->createAuth();
+use Kreait\Firebase\Exception\Auth\InvalidPassword;
+use Kreait\Firebase\Exception\Auth\UserNotFound;
 
 $message = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'] ?? '';
-    $password = $_POST['password'] ?? '';
+    $email = $_POST['email'];
+    $password = $_POST['password'];
 
     try {
+        // Coba login
         $signInResult = $auth->signInWithEmailAndPassword($email, $password);
-        $_SESSION['user'] = $signInResult->firebaseUserId();
-        header('Location: form.php');
-        exit;
-    } catch (\Kreait\Firebase\Exception\Auth\InvalidPassword $e) {
-        $message = 'Password salah.';
-    } catch (\Kreait\Firebase\Exception\Auth\UserNotFound $e) {
-        $message = 'User tidak ditemukan.';
+        $user = $auth->getUserByEmail($email);
+
+        // Cek email sudah diverifikasi?
+        if (!$user->emailVerified) {
+            $message = "Email belum diverifikasi. Cek inbox kamu.";
+        } else {
+            // Login sukses
+            session_start();
+            $_SESSION['user'] = $user->uid;
+            $_SESSION['email'] = $email;
+            header("Location: form.php");
+            exit;
+        }
+
+    } catch (InvalidPassword $e) {
+        $message = "Password salah.";
+    } catch (UserNotFound $e) {
+        $message = "Akun tidak ditemukan.";
     } catch (\Throwable $e) {
-        $message = 'Login gagal: '.$e->getMessage();
+        $message = "Terjadi kesalahan: " . $e->getMessage();
     }
 }
 ?>
