@@ -1,3 +1,5 @@
-vendor/
-/firebase_credentials.json
-.env
+.git
+node_modules
+vendor
+firebase_credentials.json
+*.log
