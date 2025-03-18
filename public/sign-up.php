@@ -1,9 +1,11 @@
 <?php
 require_once 'firebase_config.php';
+require_once 'send_verification_email.php';
 
 use Kreait\Firebase\Exception\Auth\EmailExists;
 
 $message = '';
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
@@ -23,16 +25,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $verifyLink = $auth->getEmailVerificationLink($email);
 
         // Kirim email menggunakan mail()
-        $subject = "Verifikasi Email Anda";
-        $headers = "From: admin@domainanda.com\r\n";
-        $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-        $body = "Hai,<br>Silakan klik link berikut untuk verifikasi email kamu:<br><a href='$verifyLink'>$verifyLink</a>";
+        $mailResult = sendVerificationEmail($email, $verifyLink);
 
-        if (mail($email, $subject, $body, $headers)) {
-            $message = "Akun berhasil dibuat. Silakan cek email untuk verifikasi.";
-        } else {
-            $message = "Akun dibuat, tapi gagal mengirim email verifikasi.";
-        }
+if ($mailResult === true) {
+    $message = "Akun berhasil dibuat. Silakan cek email untuk verifikasi.";
+} else {
+    $message = "Akun dibuat, tapi gagal mengirim email verifikasi. Error: " . $mailResult;
+}
+
 
     } catch (EmailExists $e) {
         $message = "Email sudah terdaftar.";
