@@ -26,6 +26,10 @@ if (!isset($_SESSION['user'])) {
         <form method="GET" action="read.php" class="view-data-form">
             <button type="submit" class="view-data-button">Tampilkan Data</button>
         </form>
+
+        <form method="POST" action="logout.php" style="text-align:right;">
+             <button type="submit" class="logout-button">Logout</button>
+        </form>
     </div>
 </body>
 </html>
