@@ -1,6 +1,8 @@
 <?php
 require __DIR__ . '/vendor/autoload.php';
 
+echo "Server Time (UTC): " . gmdate("Y-m-d H:i:s") . "<br>"; 
+
 use Kreait\Firebase\Factory;
 
 // Ambil isi credentials dari environment variable
