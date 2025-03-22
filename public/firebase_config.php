@@ -25,9 +25,8 @@ file_put_contents($tempFilePath, json_encode($serviceAccountArray));
 // Tambahkan database URI secara eksplisit
 $databaseUri = 'https://aflcloudjulius-default-rtdb.asia-southeast1.firebasedatabase.app/';
 
-// Buat instance Firebase
 $factory = (new Factory)
-    ->withServiceAccount($tempFilePath)
+    ->withServiceAccount($serviceAccountArray)
     ->withDatabaseUri($databaseUri);
 
 $auth = $factory->createAuth();
