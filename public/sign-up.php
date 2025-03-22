@@ -28,30 +28,38 @@
       appId: "1:123456789012:web:abcdefgh123456"
     };
 
-    // Inisialisasi Firebase
-    const app = firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
 
-    document.getElementById("signup-form").addEventListener("submit", function(e) {
+    document.getElementById("signup-form").addEventListener("submit", async function(e) {
       e.preventDefault();
 
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value.trim();
-      const messageDiv = document.getElementById("message");
 
-      auth.createUserWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-          const user = userCredential.user;
-          user.sendEmailVerification()
-            .then(() => {
-              messageDiv.style.color = "green";
-              messageDiv.innerText = "Pendaftaran berhasil. Link verifikasi sudah dikirim ke email kamu.";
-              auth.signOut(); // Logout supaya user tidak bisa login sebelum verifikasi
-            })
-            .catch((error) => {
-              messageDiv.style.color = "red";
-              messageDiv.innerText = "Gagal mengirim verifikasi email: " + error.message;
-            });
-        })
-        .catch((error) => {
-          messageDiv.style.color = "red";
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        if (!user.emailVerified) {
+          await sendEmailVerification(user);
+          document.getElementById("message").textContent = "Pendaftaran berhasil. Link verifikasi telah dikirim ke email kamu.";
+        } else {
+          document.getElementById("message").textContent = "Email sudah terverifikasi.";
+        }
+
+        console.log("User registered:", user);
+      } catch (error) {
+        console.error("Error during sign up:", error);
+        let msg = "Gagal mendaftar. ";
+        if (error.code === 'auth/email-already-in-use') msg += "Email sudah terdaftar.";
+        else if (error.code === 'auth/invalid-email') msg += "Email tidak valid.";
+        else if (error.code === 'auth/weak-password') msg += "Password terlalu lemah (min 6 karakter).";
+        else msg += error.message;
+        document.getElementById("message").textContent = msg;
+        document.getElementById("message").style.color = 'red';
+      }
+    });
+  </script>
+</body>
+</html>
