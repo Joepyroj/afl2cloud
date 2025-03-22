@@ -1,4 +1,6 @@
 <?php
+
+date_default_timezone_set('Asia/Jakarta');
 require_once 'firebase_config.php';
 require_once 'send_verification_email.php';
 
