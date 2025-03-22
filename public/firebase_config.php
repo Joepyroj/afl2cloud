@@ -12,12 +12,16 @@ if (!$firebaseCredentials) {
 
 $serviceAccountArray = json_decode($firebaseCredentials, true);
 
+$tempFilePath = sys_get_temp_dir() . '/firebase_credentials.json';
+file_put_contents($tempFilePath, json_encode($serviceAccountArray));
+
+
 // Tambahkan database URI secara eksplisit
-$databaseUri = 'https://aflcloudjulius-default-rtdb.asia-southeast1.firebasedatabase.app/'; // Ganti sesuai milikmu
+$databaseUri = 'https://aflcloudjulius-default-rtdb.asia-southeast1.firebasedatabase.app/'; // 
 
 $factory = (new Factory)
-    ->withServiceAccount($serviceAccountArray)
-    ->withDatabaseUri($databaseUri); // <--- Tambahkan ini
-
+    ->withServiceAccount($tempFilePath)
+    ->withDatabaseUri($databaseUri);
+    
 $auth = $factory->createAuth();
 $database = $factory->createDatabase();
