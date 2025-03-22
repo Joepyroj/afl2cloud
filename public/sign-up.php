@@ -1,65 +1,69 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Sign Up</title>
-</head>
-<body>
-  <h2>Sign Up Form</h2>
-  <form id="signup-form">
-    <input type="email" id="email" placeholder="Email" required />
-    <input type="password" id="password" placeholder="Password" required />
-    <button type="submit">Sign Up</button>
-  </form>
+<?php
 
-  <div id="message" style="text-align:center; margin-top:10px;"></div>
 
-  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+require_once 'firebase_config.php';
+require_once 'send_verification_email.php';
 
-  <script>
-    // Konfigurasi Firebase (samakan dengan login.php)
-    const firebaseConfig = {
-      apiKey: "AIzaSyB9vxxx_xxx_your_key_here",
-      authDomain: "aflcloudjulius.firebaseapp.com",
-      projectId: "aflcloudjulius",
-      storageBucket: "aflcloudjulius.appspot.com",
-      messagingSenderId: "123456789012",
-      appId: "1:123456789012:web:abcdefgh123456"
-    };
+use Kreait\Firebase\Exception\Auth\EmailExists;
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+$message = '';
 
-    document.getElementById("signup-form").addEventListener("submit", async function(e) {
-      e.preventDefault();
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
 
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
+    try {
+        $userProperties = [
+            'email' => $email,
+            'emailVerified' => false,
+            'password' => $password,
+            'disabled' => false,
+        ];
 
-      try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
+        // Buat pengguna baru
+        $createdUser = $auth->createUser($userProperties);
+        error_log("User created successfully: " . $createdUser->uid); // Log keberhasilan
 
-        if (!user.emailVerified) {
-          await sendEmailVerification(user);
-          document.getElementById("message").textContent = "Pendaftaran berhasil. Link verifikasi telah dikirim ke email kamu.";
+        // Kirim link verifikasi email
+        $verifyLink = $auth->getEmailVerificationLink($email);
+
+        // Kirim email menggunakan mail()
+        $mailResult = sendVerificationEmail($email, $verifyLink);
+
+        if ($mailResult === true) {
+            $message = "Akun berhasil dibuat. Silakan cek email untuk verifikasi.";
         } else {
-          document.getElementById("message").textContent = "Email sudah terverifikasi.";
+            $message = "Akun dibuat, tapi gagal mengirim email verifikasi. Error: " . $mailResult;
         }
 
-        console.log("User registered:", user);
-      } catch (error) {
-        console.error("Error during sign up:", error);
-        let msg = "Gagal mendaftar. ";
-        if (error.code === 'auth/email-already-in-use') msg += "Email sudah terdaftar.";
-        else if (error.code === 'auth/invalid-email') msg += "Email tidak valid.";
-        else if (error.code === 'auth/weak-password') msg += "Password terlalu lemah (min 6 karakter).";
-        else msg += error.message;
-        document.getElementById("message").textContent = msg;
-        document.getElementById("message").style.color = 'red';
-      }
-    });
-  </script>
+    } catch (EmailExists $e) {
+        $message = "Email sudah terdaftar.";
+        error_log("Signup error: " . $e->getMessage() . " | Stack trace: " . $e->getTraceAsString()); // Log error khusus
+    } catch (\Throwable $e) {
+        error_log("Signup error: " . $e->getMessage() . " | Stack trace: " . $e->getTraceAsString()); // Log error umum
+        $message = "Terjadi kesalahan: " . $e->getMessage();
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container_signup">
+    <h2>Sign Up</h2>
+    <?php if ($message): ?>
+        <p style="color: red; text-align: center;"><?= htmlspecialchars($message) ?></p>
+    <?php endif; ?>
+    <form method="POST" class="user-formsignup">
+        <input type="email" name="email" placeholder="Email" class="form-input" required>
+        <input type="password" name="password" placeholder="Password" class="form-input" required>
+        <button type="submit" class="form-buttonsignup">Sign Up</button>
+    </form>
+    <p style="text-align:center;">Sudah punya akun? <a href="login.php">Login di sini</a></p>
+</div>
 </body>
 </html>
