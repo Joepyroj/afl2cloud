@@ -24,3 +24,6 @@ COPY ./public/ /var/www/html/
 
 # Set permission
 RUN chown -R www-data:www-data /var/www/html
+
+RUN apt-get update && apt-get install -y tzdata
+ENV TZ=Asia/Jakarta
