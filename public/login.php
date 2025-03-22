@@ -1,72 +1,60 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Login</title>
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth.js"></script>
+<?php
+require_once 'firebase_config.php';
 
-  <style>
-    body { font-family: Arial, sans-serif; }
-    form { max-width: 300px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
-    input, button { width: 100%; margin-bottom: 10px; padding: 8px; }
-  </style>
+use Kreait\Firebase\Exception\Auth\InvalidPassword;
+use Kreait\Firebase\Exception\Auth\UserNotFound;
+
+$message = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+
+    try {
+        // Coba login
+        $signInResult = $auth->signInWithEmailAndPassword($email, $password);
+        $user = $auth->getUserByEmail($email);
+
+        // Cek email sudah diverifikasi?
+        if (!$user->emailVerified) {
+            $message = "Email belum diverifikasi. Cek inbox kamu.";
+        } else {
+            // Login sukses
+            session_start();
+            $_SESSION['user'] = $user->uid;
+            $_SESSION['email'] = $email;
+            header("Location: form.php");
+            exit;
+        }
+
+    } catch (InvalidPassword $e) {
+        $message = "Password salah.";
+    } catch (UserNotFound $e) {
+        $message = "Akun tidak ditemukan.";
+    } catch (\Throwable $e) {
+        $message = "Terjadi kesalahan: " . $e->getMessage();
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<h2 style="text-align:center;">Login</h2>
-<form id="login-form">
-  <input type="email" id="email" placeholder="Email" required />
-  <input type="password" id="password" placeholder="Password" required />
-  <button type="submit">Login</button>
-</form>
-
-<div id="message" style="text-align:center; margin-top: 10px;"></div>
-
-<script>
-  // ✅ Konfigurasi Firebase kamu
-  const firebaseConfig = {
-    apiKey: "AIzaSyBvoxxRo2UC0XCKmuyMrRE3jjVFlboMeKs",
-    authDomain: "aflcloudjulius.firebaseapp.com",
-    projectId: "aflcloudjulius",
-    storageBucket: "aflcloudjulius.firebasestorage.app",
-    messagingSenderId: "1034706840573",
-    appId: "1:1034706840573:web:df4b46440718fe0903c794",
-  };
-
-  // Inisialisasi Firebase
-  const app = firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-
-  // Tangani login form
-  document.getElementById("login-form").addEventListener("submit", function(e) {
-    e.preventDefault();
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
-
-    auth.signInWithEmailAndPassword(email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        if (user.emailVerified) {
-          document.getElementById("message").innerText = "Login berhasil! Email sudah diverifikasi.";
-          // Lanjut ke halaman form.php misalnya
-          setTimeout(() => {
-            window.location.href = "form.php";
-          }, 1000);
-        } else {
-          // Kirim verifikasi email
-          user.sendEmailVerification()
-            .then(() => {
-              document.getElementById("message").innerText = "Login berhasil, tapi email belum diverifikasi. Email verifikasi telah dikirim. Silakan cek inbox.";
-            });
-        }
-      })
-      .catch((error) => {
-        document.getElementById("message").innerText = "Login gagal: " + error.message;
-      });
-  });
-</script>
-
+<div class="containerlogin">
+    <h2>Login</h2>
+    <?php if ($message): ?>
+        <p style="color: red; text-align: center;"><?= htmlspecialchars($message) ?></p>
+    <?php endif; ?>
+    <form method="POST" class="user-formlogin">
+        <input type="email" name="email" placeholder="Email" class="form-input" required>
+        <input type="password" name="password" placeholder="Password" class="form-input" required>
+        <button type="submit" class="form-buttonlogin">Login</button>
+    </form>
+    <p style="text-align:center;">Belum punya akun? <a href="sign-up.php">Daftar di sini</a></p>
+</div>
 </body>
 </html>
