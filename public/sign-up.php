@@ -6,7 +6,6 @@ use Kreait\Firebase\Exception\Auth\EmailExists;
 
 $message = '';
 
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
     $password = $_POST['password'];
@@ -19,7 +18,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'disabled' => false,
         ];
 
+        // Buat pengguna baru
         $createdUser = $auth->createUser($userProperties);
+        error_log("User created successfully: " . $createdUser->uid); // Log keberhasilan
 
         // Kirim link verifikasi email
         $verifyLink = $auth->getEmailVerificationLink($email);
@@ -27,16 +28,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Kirim email menggunakan mail()
         $mailResult = sendVerificationEmail($email, $verifyLink);
 
-if ($mailResult === true) {
-    $message = "Akun berhasil dibuat. Silakan cek email untuk verifikasi.";
-} else {
-    $message = "Akun dibuat, tapi gagal mengirim email verifikasi. Error: " . $mailResult;
-}
-
+        if ($mailResult === true) {
+            $message = "Akun berhasil dibuat. Silakan cek email untuk verifikasi.";
+        } else {
+            $message = "Akun dibuat, tapi gagal mengirim email verifikasi. Error: " . $mailResult;
+        }
 
     } catch (EmailExists $e) {
         $message = "Email sudah terdaftar.";
+        error_log("Signup error: " . $e->getMessage() . " | Stack trace: " . $e->getTraceAsString()); // Log error khusus
     } catch (\Throwable $e) {
+        error_log("Signup error: " . $e->getMessage() . " | Stack trace: " . $e->getTraceAsString()); // Log error umum
         $message = "Terjadi kesalahan: " . $e->getMessage();
     }
 }
