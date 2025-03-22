@@ -1,69 +1,57 @@
-<?php
-
-date_default_timezone_set('Asia/Jakarta');
-require_once 'firebase_config.php';
-require_once 'send_verification_email.php';
-
-use Kreait\Firebase\Exception\Auth\EmailExists;
-
-$message = '';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-
-    try {
-        $userProperties = [
-            'email' => $email,
-            'emailVerified' => false,
-            'password' => $password,
-            'disabled' => false,
-        ];
-
-        // Buat pengguna baru
-        $createdUser = $auth->createUser($userProperties);
-        error_log("User created successfully: " . $createdUser->uid); // Log keberhasilan
-
-        // Kirim link verifikasi email
-        $verifyLink = $auth->getEmailVerificationLink($email);
-
-        // Kirim email menggunakan mail()
-        $mailResult = sendVerificationEmail($email, $verifyLink);
-
-        if ($mailResult === true) {
-            $message = "Akun berhasil dibuat. Silakan cek email untuk verifikasi.";
-        } else {
-            $message = "Akun dibuat, tapi gagal mengirim email verifikasi. Error: " . $mailResult;
-        }
-
-    } catch (EmailExists $e) {
-        $message = "Email sudah terdaftar.";
-        error_log("Signup error: " . $e->getMessage() . " | Stack trace: " . $e->getTraceAsString()); // Log error khusus
-    } catch (\Throwable $e) {
-        error_log("Signup error: " . $e->getMessage() . " | Stack trace: " . $e->getTraceAsString()); // Log error umum
-        $message = "Terjadi kesalahan: " . $e->getMessage();
-    }
-}
-?>
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Sign Up</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Sign Up</title>
 </head>
 <body>
-<div class="container_signup">
-    <h2>Sign Up</h2>
-    <?php if ($message): ?>
-        <p style="color: red; text-align: center;"><?= htmlspecialchars($message) ?></p>
-    <?php endif; ?>
-    <form method="POST" class="user-formsignup">
-        <input type="email" name="email" placeholder="Email" class="form-input" required>
-        <input type="password" name="password" placeholder="Password" class="form-input" required>
-        <button type="submit" class="form-buttonsignup">Sign Up</button>
-    </form>
-    <p style="text-align:center;">Sudah punya akun? <a href="login.php">Login di sini</a></p>
-</div>
-</body>
-</html>
+  <h2>Sign Up Form</h2>
+  <form id="signup-form">
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <button type="submit">Sign Up</button>
+  </form>
+
+  <div id="message" style="text-align:center; margin-top:10px;"></div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+
+  <script>
+    // Konfigurasi Firebase (samakan dengan login.php)
+    const firebaseConfig = {
+      apiKey: "AIzaSyB9vxxx_xxx_your_key_here",
+      authDomain: "aflcloudjulius.firebaseapp.com",
+      projectId: "aflcloudjulius",
+      storageBucket: "aflcloudjulius.appspot.com",
+      messagingSenderId: "123456789012",
+      appId: "1:123456789012:web:abcdefgh123456"
+    };
+
+    // Inisialisasi Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    document.getElementById("signup-form").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const messageDiv = document.getElementById("message");
+
+      auth.createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          user.sendEmailVerification()
+            .then(() => {
+              messageDiv.style.color = "green";
+              messageDiv.innerText = "Pendaftaran berhasil. Link verifikasi sudah dikirim ke email kamu.";
+              auth.signOut(); // Logout supaya user tidak bisa login sebelum verifikasi
+            })
+            .catch((error) => {
+              messageDiv.style.color = "red";
+              messageDiv.innerText = "Gagal mengirim verifikasi email: " + error.message;
+            });
+        })
+        .catch((error) => {
+          messageDiv.style.color = "red";
